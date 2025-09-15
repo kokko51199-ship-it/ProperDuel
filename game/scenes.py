@@ -238,7 +238,7 @@ class MainMenuScene:
         
         # Menu state
         self.selected_option = 0
-        self.menu_options = ["START GAME", "QUIT"]
+        self.menu_options = ["START GAME", "LEVEL SELECT", "QUIT"]
         
         # Background
         self.bg_color = (20, 30, 40)  # Dark blue background
@@ -298,7 +298,9 @@ class MainMenuScene:
                 elif event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                     if self.selected_option == 0:  # START GAME
                         return "start_game"
-                    elif self.selected_option == 1:  # QUIT
+                    elif self.selected_option == 1:  # LEVEL SELECT
+                        return "level_select"
+                    elif self.selected_option == 2:  # QUIT
                         return "quit"
                 elif event.key == pygame.K_ESCAPE:
                     return "quit"
@@ -394,6 +396,153 @@ class MainMenuScene:
             screen.blit(inst_text, inst_rect)
 
 
+class LevelSelectScene:
+    """Level selection scene for jumping to different levels."""
+    
+    def __init__(self, screen_width: int, screen_height: int):
+        """Initialize the level select scene."""
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        
+        # Menu state
+        self.selected_option = 0
+        self.level_options = ["LEVEL 1", "LEVEL 2", "BACK TO MENU"]
+        
+        # Background
+        self.bg_color = (20, 30, 40)  # Dark blue background
+        self.background_image = None
+        self._load_background()
+        
+        # Fonts
+        self.font = None
+        self.large_font = None
+        self._init_fonts()
+        
+        # Animation
+        self.menu_blink_timer = 0.0
+        self.menu_blink_speed = 1.0  # Blinks per second
+        
+    def _init_fonts(self):
+        """Initialize pixelated retro fonts."""
+        self.font = pygame.font.Font(None, 24)          # Medium pixelated text  
+        self.large_font = pygame.font.Font(None, 32)    # Large pixelated text
+    
+    def _render_pixel_text(self, text: str, font: pygame.font.Font, color: tuple, scale: int = 2):
+        """Render text with pixelated, retro look by scaling up small text."""
+        small_surface = font.render(text, False, color)  # False = no anti-aliasing for pixel look
+        original_size = small_surface.get_size()
+        new_size = (original_size[0] * scale, original_size[1] * scale)
+        scaled_surface = pygame.transform.scale(small_surface, new_size)
+        return scaled_surface
+    
+    def _load_background(self):
+        """Load background image if available."""
+        bg_path = sprite_path("background.png")
+        if os.path.exists(bg_path):
+            try:
+                self.background_image = pygame.image.load(bg_path)
+                self.background_image = pygame.transform.scale(
+                    self.background_image, 
+                    (self.screen_width, self.screen_height)
+                )
+            except pygame.error:
+                self.background_image = None
+    
+    def handle_input(self, keys_pressed: dict, events: list) -> str:
+        """Handle level select input and return action."""
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.selected_option = (self.selected_option - 1) % len(self.level_options)
+                elif event.key == pygame.K_DOWN:
+                    self.selected_option = (self.selected_option + 1) % len(self.level_options)
+                elif event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                    if self.selected_option == 0:  # LEVEL 1
+                        return "start_level1"
+                    elif self.selected_option == 1:  # LEVEL 2
+                        return "start_level2"
+                    elif self.selected_option == 2:  # BACK TO MENU
+                        return "menu"
+                elif event.key == pygame.K_ESCAPE:
+                    return "menu"
+        
+        return "continue"
+    
+    def update(self, dt: float):
+        """Update level select animations."""
+        self.menu_blink_timer += dt
+    
+    def render(self, screen: pygame.Surface):
+        """Render the level select screen."""
+        # Draw background
+        if self.background_image:
+            # Darken the background for menu
+            darkened_bg = self.background_image.copy()
+            darkened_bg.fill((0, 0, 0, 180), special_flags=pygame.BLEND_RGBA_MULT)
+            screen.blit(darkened_bg, (0, 0))
+        else:
+            screen.fill(self.bg_color)
+        
+        # Title
+        title_text = self._render_pixel_text("LEVEL SELECT", self.large_font, (0, 255, 255), 3)  # Cyan
+        title_rect = title_text.get_rect()
+        title_rect.centerx = self.screen_width // 2
+        title_rect.y = 100
+        screen.blit(title_text, title_rect)
+        
+        # Level descriptions
+        level_descriptions = [
+            "VS EVIL TWIN - Classic Samurai Combat",
+            "VS YELLOW NINJA - Advanced Enemy AI", 
+            ""
+        ]
+        
+        # Menu options
+        menu_start_y = self.screen_height // 2
+        option_spacing = 80
+        
+        for i, option in enumerate(self.level_options):
+            # Determine color and scale based on selection
+            if i == self.selected_option:
+                # Selected option - bright and blinking
+                blink_alpha = abs(math.sin(self.menu_blink_timer * self.menu_blink_speed * math.pi))
+                color = (255, int(255 * blink_alpha), 0)  # Orange to yellow blink
+                scale = 2
+            else:
+                # Unselected option - dimmer
+                color = (180, 180, 180)
+                scale = 2
+            
+            option_text = self._render_pixel_text(option, self.large_font, color, scale)
+            option_rect = option_text.get_rect()
+            option_rect.centerx = self.screen_width // 2
+            option_rect.y = menu_start_y + i * option_spacing
+            screen.blit(option_text, option_rect)
+            
+            # Show level description
+            if i < len(level_descriptions) and level_descriptions[i]:
+                desc_text = self._render_pixel_text(level_descriptions[i], self.font, (150, 150, 150), 1)
+                desc_rect = desc_text.get_rect()
+                desc_rect.centerx = self.screen_width // 2
+                desc_rect.y = option_rect.bottom + 10
+                screen.blit(desc_text, desc_rect)
+        
+        # Instructions
+        instructions = [
+            "USE ARROW KEYS TO NAVIGATE",
+            "PRESS ENTER TO SELECT",
+            "ESC TO GO BACK"
+        ]
+        
+        inst_start_y = self.screen_height - 100
+        for i, instruction in enumerate(instructions):
+            inst_text = self._render_pixel_text(instruction, self.font, (120, 120, 120), 1)
+            inst_rect = inst_text.get_rect()
+            inst_rect.centerx = self.screen_width // 2
+            inst_rect.y = inst_start_y + i * 25
+            screen.blit(inst_text, inst_rect)
+
+
 class FightScene:
     """Main fighting scene with player vs AI - First to 3 wins."""
     
@@ -407,9 +556,12 @@ class FightScene:
         self.block_sound = None
         self.pain_sound = None
         
-        # Create characters (attack_sound will be updated when available)
-        self.player1 = Samurai1(150, 335)  # Human player (left side)
-        self.player2 = Samurai2(600, 335)  # AI opponent (right side)
+        # Create characters with proper ground positioning
+        # Screen height is 600px, character hitbox is 100px, so Y = 600 - 100 = 500
+        ground_level_y = self.screen_height - 100  # Bottom edge of hitbox touches bottom of screen
+        
+        self.player1 = Samurai1(150, ground_level_y)  # Human player (left side)
+        self.player2 = Samurai2(600, ground_level_y)  # AI opponent (right side)
         
         # Match state (first to 3 wins)
         self.player_wins = 0
@@ -423,6 +575,10 @@ class FightScene:
         self.round_winner: Optional[str] = None
         self.match_over = False
         self.match_winner: Optional[str] = None
+        
+        # Attack tracking to prevent multiple hits from same attack
+        self.player1_last_hit_attack_id = -1
+        self.player2_last_hit_attack_id = -1
         
         # Round transition
         self.round_end_timer = 0.0
@@ -484,6 +640,42 @@ class FightScene:
         self.player2.attack_sound = attack_sound
         self.player2.block_sound = block_sound
         self.player2.pain_sound = pain_sound
+    
+    def _render_debug_hitboxes(self, screen: pygame.Surface):
+        """Render debug hitboxes for characters and attacks."""
+        # Yellow boxes for character hitboxes
+        player_rect = pygame.Rect(self.player1.x, self.player1.y, self.player1.width, self.player1.height)
+        enemy_rect = pygame.Rect(self.player2.x, self.player2.y, self.player2.width, self.player2.height)
+        
+        pygame.draw.rect(screen, (255, 255, 0), player_rect, 2)  # Yellow outline for player
+        pygame.draw.rect(screen, (255, 255, 0), enemy_rect, 2)   # Yellow outline for enemy
+        
+        # Red squares for attack hitboxes (when attacking)
+        attack_range = 60  # Same as collision detection range
+        
+        # Player attack hitbox
+        if self.player1.is_attacking:
+            if self.player1.facing_right:
+                attack_x = self.player1.x + self.player1.width
+                attack_y = self.player1.y + (self.player1.height // 4)
+            else:
+                attack_x = self.player1.x - attack_range
+                attack_y = self.player1.y + (self.player1.height // 4)
+            
+            attack_rect = pygame.Rect(attack_x, attack_y, attack_range, self.player1.height // 2)
+            pygame.draw.rect(screen, (255, 0, 0), attack_rect, 2)  # Red outline for player attack
+            
+        # Enemy attack hitbox
+        if self.player2.is_attacking:
+            if self.player2.facing_right:
+                attack_x = self.player2.x + self.player2.width
+                attack_y = self.player2.y + (self.player2.height // 4)
+            else:
+                attack_x = self.player2.x - attack_range
+                attack_y = self.player2.y + (self.player2.height // 4)
+            
+            attack_rect = pygame.Rect(attack_x, attack_y, attack_range, self.player2.height // 2)
+            pygame.draw.rect(screen, (255, 0, 0), attack_rect, 2)  # Red outline for enemy attack
     
     def update_pause(self, dt: float, paused: bool):
         """Update pause state and blinking animation."""
@@ -661,9 +853,11 @@ class FightScene:
         self.round_winner = None
         self.round_time = 99.0
         
-        # Reset character positions and health
+        # Reset character positions and health with proper ground positioning
+        ground_level_y = self.screen_height - 100  # Bottom edge of hitbox touches bottom of screen
+        
         self.player1.x = 0
-        self.player1.y = 335
+        self.player1.y = ground_level_y
         self.player1.health = self.player1.max_health
         self.player1.velocity_x = 0
         self.player1.velocity_y = 0
@@ -674,7 +868,7 @@ class FightScene:
         self.player1.is_dead = False  # Reset death state
         
         self.player2.x = 600
-        self.player2.y = 335
+        self.player2.y = ground_level_y
         self.player2.health = self.player2.max_health
         self.player2.velocity_x = 0
         self.player2.velocity_y = 0
@@ -717,6 +911,9 @@ class FightScene:
         # Render characters
         self.player1.render(surface)
         self.player2.render(surface)
+        
+        # Debug: Draw character hitboxes (yellow) and attack hitboxes (red)
+        self._render_debug_hitboxes(surface)
         
         # Render UI
         self._render_ui(surface)
@@ -1156,6 +1353,10 @@ class Level2Scene:
         self._init_fonts()
         self._load_background()
         
+        # Ensure proper positioning after character sprite loading
+        # This is called after a short delay to ensure sprites are loaded
+        self._positioning_timer = 0.1  # Small delay to ensure sprite loading is complete
+        
     def _init_fonts(self):
         """Initialize fonts."""
         try:
@@ -1170,6 +1371,44 @@ class Level2Scene:
             self.large_font = pygame.font.Font(None, 32)
             self.mega_font = pygame.font.Font(None, 48)
         
+    def _detect_ground_surface(self, ground_image):
+        """Detect the actual ground surface by scanning for opaque pixels from bottom up."""
+        if not ground_image:
+            return 0.0
+            
+        try:
+            # Convert to per-pixel alpha for analysis
+            width, height = ground_image.get_size()
+            
+            # Scan from bottom up to find first row with significant opaque content
+            for y in range(height - 1, -1, -1):
+                opaque_pixels = 0
+                total_pixels = 0
+                
+                # Sample pixels across the width
+                for x in range(0, width, max(1, width // 50)):  # Sample ~50 points across width
+                    try:
+                        r, g, b, a = ground_image.get_at((x, y))
+                        total_pixels += 1
+                        if a > 128:  # Consider >50% alpha as opaque
+                            opaque_pixels += 1
+                    except IndexError:
+                        continue
+                
+                # If we find a row with >30% opaque pixels, this is likely the surface
+                if total_pixels > 0 and (opaque_pixels / total_pixels) > 0.3:
+                    # Return screen-space Y coordinate of this surface
+                    screen_y = (self.screen_height - self.ground_image.get_height()) + y
+                    print(f"Ground surface detected at screen Y: {screen_y} (ground row {y})")
+                    return float(screen_y)
+            
+            # Fallback: use ground top if no surface detected
+            return float(self.screen_height - height)
+            
+        except Exception as e:
+            print(f"Error detecting ground surface: {e}")
+            return float(self.screen_height - self.ground_image.get_height())
+
     def _load_background(self):
         """Load the background image."""
         try:
@@ -1190,20 +1429,80 @@ class Level2Scene:
                 if ground_img.get_width() != self.screen_width:
                     ground_img = pygame.transform.scale(ground_img, (self.screen_width, g_height))
                 self.ground_image = ground_img
-                # Compute top Y coordinate of the ground (top edge of ground graphic)
+                
+                # Detect actual ground surface level
+                self.ground_surface_y = self._detect_ground_surface(self.ground_image)
                 self.ground_top_y = float(self.screen_height - self.ground_image.get_height())
-                # Place fighters using manual offsets so their bottoms sit lower on the screen
-                # Player uses physics ground_y; enemy receives ground via update()
-                new_p1_ground = (self.ground_top_y + self.spawn_offset_player) - self.player1.height
-                self.player1.ground_y = new_p1_ground
-                self.player1.y = new_p1_ground
-                self.player1.on_ground = True
-                # Initialize enemy y similarly (its update() will keep it on the provided ground)
-                self.player2.y = (self.ground_top_y + self.spawn_offset_enemy) - self.player2.height
-                self.player2.on_ground = True
-                print(f"Loaded Level 2 ground: {ground_path} at y={self.ground_top_y}")
+                
+                print(f"Loaded Level 2 ground: {ground_path}")
+                print(f"Ground top Y: {self.ground_top_y}, Surface Y: {self.ground_surface_y}")
+                
+                # Initial positioning will be corrected after sprite loading
+                self._position_characters_on_ground()
+                
         except pygame.error:
             self.background_image = None
+            
+    def _position_characters_on_ground(self):
+        """Position characters properly on the detected ground surface."""
+        if not hasattr(self, 'ground_surface_y'):
+            return
+            
+        # Calculate character Y positions so the bottom edge of their hitbox touches the ground
+        # Character Y coordinate is the top-left of their hitbox
+        # So: character.y + character.height = ground_surface_y
+        # Therefore: character.y = ground_surface_y - character.height
+        
+        player_ground_y = self.ground_surface_y - self.player1.height  # 599 - 48 = 551
+        enemy_ground_y = self.ground_surface_y - self.player2.height   # 599 - 48 = 551
+        
+        # Player positioning
+        self.player1.ground_y = player_ground_y
+        self.player1.y = player_ground_y
+        self.player1.on_ground = True
+        
+        # Enemy positioning  
+        self.player2.y = enemy_ground_y
+        self.player2.on_ground = True
+        
+        print(f"Positioned characters on ground surface (Y: {self.ground_surface_y}) - Player: {self.player1.y}, Enemy: {self.player2.y}")
+        print(f"Character hitbox: {self.player1.width}x{self.player1.height}, bottom edge at Y: {self.player1.y + self.player1.height}")
+        
+    def _render_debug_hitboxes(self, screen: pygame.Surface):
+        """Render debug hitboxes for characters and attacks."""
+        # Yellow boxes for character hitboxes
+        player_rect = pygame.Rect(self.player1.x, self.player1.y, self.player1.width, self.player1.height)
+        enemy_rect = pygame.Rect(self.player2.x, self.player2.y, self.player2.width, self.player2.height)
+        
+        pygame.draw.rect(screen, (255, 255, 0), player_rect, 2)  # Yellow outline for player
+        pygame.draw.rect(screen, (255, 255, 0), enemy_rect, 2)   # Yellow outline for enemy
+        
+        # Red squares for attack hitboxes (when attacking)
+        attack_range = 60  # Same as collision detection range
+        
+        # Player attack hitbox
+        if self.player1.is_attacking:
+            if self.player1.facing_right:
+                attack_x = self.player1.x + self.player1.width
+                attack_y = self.player1.y + (self.player1.height // 4)
+            else:
+                attack_x = self.player1.x - attack_range
+                attack_y = self.player1.y + (self.player1.height // 4)
+            
+            attack_rect = pygame.Rect(attack_x, attack_y, attack_range, self.player1.height // 2)
+            pygame.draw.rect(screen, (255, 0, 0), attack_rect, 2)  # Red outline for player attack
+            
+        # Enemy attack hitbox
+        if self.player2.is_attacking:
+            if self.player2.facing_right:
+                attack_x = self.player2.x + self.player2.width
+                attack_y = self.player2.y + (self.player2.height // 4)
+            else:
+                attack_x = self.player2.x - attack_range
+                attack_y = self.player2.y + (self.player2.height // 4)
+            
+            attack_rect = pygame.Rect(attack_x, attack_y, attack_range, self.player2.height // 2)
+            pygame.draw.rect(screen, (255, 0, 0), attack_rect, 2)  # Red outline for enemy attack
             
     def _render_pixel_text(self, text: str, font: pygame.font.Font, color: tuple, scale: int = 2):
         """Render text with pixelated, retro look by scaling up small text."""
@@ -1262,6 +1561,13 @@ class Level2Scene:
         
     def update(self, dt: float, player1_input=None, player2_input=None):
         """Update Level 2 scene."""
+        # Handle initial positioning after sprite loading
+        if hasattr(self, '_positioning_timer') and self._positioning_timer > 0:
+            self._positioning_timer -= dt
+            if self._positioning_timer <= 0:
+                self._position_characters_on_ground()
+                delattr(self, '_positioning_timer')  # Remove timer after use
+        
         # Handle dialogue
         if self.showing_dialogue:
             self.dialogue_timer += dt
@@ -1298,12 +1604,8 @@ class Level2Scene:
             empty_input = PlayerInput()
             self.player1.update(dt, empty_input)
         
-        # Update AI enemy using ground plane with manual offset applied
-        if self.ground_image is not None:
-            enemy_ground_y = (self.ground_top_y + self.spawn_offset_enemy) - self.player2.height
-        else:
-            # Fallback: keep original baseline (335) and apply enemy offset relative to feet baseline
-            enemy_ground_y = 335 + self.spawn_offset_enemy
+        # Update AI enemy using actual ground position
+        enemy_ground_y = self.ground_surface_y - self.player2.height if hasattr(self, 'ground_surface_y') else 250
         self.player2.update(dt, 2000.0, enemy_ground_y, self.player1, self.arena_left, self.arena_right)
         
         # Collision detection
@@ -1316,48 +1618,44 @@ class Level2Scene:
             self._end_round("player_wins")
     
     def _check_collisions(self):
-        """Check for combat collisions between characters."""
-        distance = abs(self.player1.x - self.player2.x)
-        
-        # Check player 1 attacking player 2
-        if (self.player1.is_attacking and self.player1.can_hit and 
-            distance < 60 and self._is_facing_target(self.player1, self.player2)):
-            
-            if self.player2.is_blocking:
-                # Block
-                self.player1.can_hit = False
-                if self.block_sound:
-                    self.block_sound.play()
-                # Reduce blocker's stamina
-                self.player2.stamina = max(0, self.player2.stamina - 50)
-                if self.player2.stamina <= 0:
-                    self.player2.start_stun()
-            else:
-                # Hit
-                damage = 25 if not self.player1.god_mode else 100
-                self._deal_damage(self.player2, damage)
-                self.player1.can_hit = False
+        """Check for combat collisions between characters using Level 1's proven system."""
+        # Check if player hits enemy with regular attack
+        p1_attack = self.player1.get_attack_rect()
+        if p1_attack and p1_attack.colliderect(self.player2.get_rect()):
+            # Use god mode damage if active, otherwise normal damage (same as Level 1)
+            damage = 100 if self.player1.god_mode else 3
+            if self.player2.take_damage(damage, self.player1.x):  # Pass attacker's position
+                print("Player hits Yellow Ninja!")
+                self.player1.can_hit = False  # Prevent multiple hits from same attack
                 if self.pain_sound:
                     self.pain_sound.play()
         
-        # Check player 2 attacking player 1
-        if (self.player2.is_attacking and self.player2.can_hit and 
-            distance < 60 and self._is_facing_target(self.player2, self.player1)):
-            
-            if self.player1.is_blocking:
-                # Block
-                self.player2.can_hit = False
-                if self.block_sound:
-                    self.block_sound.play()
-                # Reduce blocker's stamina
-                self.player1.stamina = max(0, self.player1.stamina - 50)
-                if self.player1.stamina <= 0:
-                    self.player1.start_stun()
-            else:
-                # Hit
-                damage = 25
-                self._deal_damage(self.player1, damage)
-                self.player2.can_hit = False
+        # Check if player hits enemy with special attack
+        p1_special_attack = self.player1.get_special_attack_rect()
+        if p1_special_attack and p1_special_attack.colliderect(self.player2.get_rect()):
+            # Use god mode damage if active, otherwise normal special damage (same as Level 1)
+            damage = 100 if self.player1.god_mode else 8
+            if self.player2.take_damage(damage, self.player1.x):  # Higher damage for special attack
+                print("Player special hits Yellow Ninja!")
+                self.player1.can_special_hit = False  # Prevent multiple hits from same special attack
+                if self.pain_sound:
+                    self.pain_sound.play()
+        
+        # Check if enemy hits player with regular attack
+        p2_attack = self.player2.get_attack_rect()
+        if p2_attack and p2_attack.colliderect(self.player1.get_rect()):
+            if self.player1.take_damage(3, self.player2.x):  # Pass attacker's position (same as Level 1)
+                print("Yellow Ninja hits Player!")
+                self.player2.can_hit = False  # Prevent multiple hits from same attack
+                if self.pain_sound:
+                    self.pain_sound.play()
+        
+        # Check if enemy hits player with special attack
+        p2_special_attack = self.player2.get_special_attack_rect()
+        if p2_special_attack and p2_special_attack.colliderect(self.player1.get_rect()):
+            if self.player1.take_damage(8, self.player2.x):  # Higher damage for special attack (same as Level 1)
+                print("Yellow Ninja special hits Player!")
+                self.player2.can_special_hit = False  # Prevent multiple hits from same special attack
                 if self.pain_sound:
                     self.pain_sound.play()
     
@@ -1418,15 +1716,12 @@ class Level2Scene:
         self.round_winner = None
         self.round_time = 99.0
         
-        # Reset character positions and health
+        # Reset character positions using ground-based positioning
+        ground_y = self.ground_surface_y - self.player1.height if hasattr(self, 'ground_surface_y') else 300
+        
         self.player1.x = 0
-        if self.ground_image is not None:
-            self.player1.ground_y = (self.ground_top_y + self.spawn_offset_player) - self.player1.height
-            self.player1.y = self.player1.ground_y
-        else:
-            # Fallback to original baseline + offset (feet baseline)
-            self.player1.ground_y = 335 + self.spawn_offset_player
-            self.player1.y = self.player1.ground_y
+        self.player1.ground_y = ground_y
+        self.player1.y = ground_y
         self.player1.health = self.player1.max_health
         self.player1.velocity_x = 0
         self.player1.velocity_y = 0
@@ -1441,10 +1736,7 @@ class Level2Scene:
         self.player1.stun_timer = 0.0
         
         self.player2.x = 600
-        if self.ground_image is not None:
-            self.player2.y = (self.ground_top_y + self.spawn_offset_enemy) - self.player2.height
-        else:
-            self.player2.y = 335 + self.spawn_offset_enemy
+        self.player2.y = ground_y  # Same ground level as player
         self.player2.health = self.player2.max_health
         self.player2.velocity_x = 0
         self.player2.velocity_y = 0
@@ -1478,6 +1770,9 @@ class Level2Scene:
         # Render characters
         self.player1.render(screen)
         self.player2.render(screen)
+        
+        # Debug: Draw character hitboxes (yellow) and attack hitboxes (red)
+        self._render_debug_hitboxes(screen)
         
         # Draw UI - identical to Level 1
         self._render_health_bar(screen, 20, 90, self.player1.health, self.player1.max_health, (100, 100, 255))

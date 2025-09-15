@@ -6,7 +6,7 @@ Core game loop and rendering system.
 import pygame
 import os
 from typing import Optional, Union
-from game.scenes import FightScene, MainMenuScene, SplashScene, Level2Scene
+from game.scenes import FightScene, MainMenuScene, SplashScene, Level2Scene, LevelSelectScene
 from game.input_handler import InputHandler
 from game.resource_utils import audio_path
 
@@ -92,10 +92,27 @@ class GameEngine:
                 
                 if action == "start_game":
                     self._switch_to_fight_scene()
+                elif action == "level_select":
+                    self._switch_to_level_select_scene()
                 elif action == "quit":
                     self.running = False
                 
                 # Update menu animations
+                self.current_scene.update(dt)
+                
+            elif self.scene_type == "level_select":
+                # Handle level select input and get action
+                keys_pressed = pygame.key.get_pressed()
+                action = self.current_scene.handle_input(keys_pressed, events)
+                
+                if action == "start_level1":
+                    self._switch_to_fight_scene()
+                elif action == "start_level2":
+                    self._switch_to_level2_scene()
+                elif action == "menu":
+                    self._switch_to_menu_scene()
+                
+                # Update level select animations
                 self.current_scene.update(dt)
                 
             elif self.scene_type == "level2":
@@ -204,6 +221,12 @@ class GameEngine:
         """Switch from splash or fight scene to menu."""
         self.current_scene = MainMenuScene(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.scene_type = "menu"
+        self.scene_transition_cooldown = 0.5  # 0.5 second cooldown
+        
+    def _switch_to_level_select_scene(self):
+        """Switch from menu to level select."""
+        self.current_scene = LevelSelectScene(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
+        self.scene_type = "level_select"
         self.scene_transition_cooldown = 0.5  # 0.5 second cooldown
         
     def _switch_to_level2_scene(self):

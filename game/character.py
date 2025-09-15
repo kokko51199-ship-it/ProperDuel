@@ -76,12 +76,14 @@ class Character:
         
         # Physics
         self.gravity = 800.0  # pixels per second squared
-        self.ground_y = 335.0  # ground level (updated to match spawn position)
+        self.ground_y = 500.0  # ground level (600px screen - 100px hitbox = 500px)
         self.on_ground = True
         
         # Sprite properties
-        self.width = 32
-        self.height = 48
+        self.width = 100         # Logical hitbox width (for collision)
+        self.height = 100        # Logical hitbox height (for collision) - large square hitbox for testing
+        self.visual_width = 32   # Visual sprite width (for rendering)
+        self.visual_height = 48  # Visual sprite height (for rendering)
         self.color = (100, 100, 200)  # Fallback color
         
         # Animation system
@@ -300,8 +302,14 @@ class Character:
                 self.is_stunned = False
                 self.is_blocking = False
         
-        # Attack duration
+        # Attack duration and hit frame detection
         if self.is_attacking:
+            # Check if attack animation has reached the hit frame (same logic as base Character class)
+            if self.animator.current_animation_name == "attack":
+                current_frame = self.animator.current_animation.current_frame
+                if current_frame >= self.attack_hit_frame and not self.can_hit:
+                    self.can_hit = True  # Enable hit detection
+            
             self.attack_duration -= dt
             if self.attack_duration <= 0:
                 self.is_attacking = False
@@ -313,8 +321,14 @@ class Character:
             if self.hit_duration <= 0:
                 self.is_hit = False
         
-        # Special attack duration
+        # Special attack duration and hit frame detection
         if self.is_special_attacking:
+            # Check if special attack animation has reached the hit frame
+            if self.animator.current_animation_name == "special_attack":
+                current_frame = self.animator.current_animation.current_frame
+                if current_frame >= self.special_attack_hit_frame and not self.can_special_hit:
+                    self.can_special_hit = True  # Enable hit detection
+            
             self.special_attack_duration -= dt
             if self.special_attack_duration <= 0:
                 self.is_special_attacking = False
@@ -391,6 +405,10 @@ class Character:
     
     def take_damage(self, damage: int, attacker_x: float):
         """Take damage if not blocking properly."""
+        # God mode makes player invincible
+        if self.god_mode:
+            return False
+            
         # Check if blocking is effective (must face the attacker)
         is_effective_block = False
         if self.is_blocking and not self.is_dead:
@@ -483,7 +501,7 @@ class Character:
         if not self.facing_right:
             current_frame = pygame.transform.flip(current_frame, True, False)
         
-        # Calculate render position (center the sprite on character position)
+        # Calculate render position (center the visual sprite on character hitbox position)
         render_x = self.x - (current_frame.get_width() - self.width) // 2
         render_y = self.y - (current_frame.get_height() - self.height) // 2
         
@@ -525,12 +543,12 @@ class Samurai1(Character):
             
             self.animator.add_animation("idle", idle_animation)
             
-            # Update character dimensions based on scaled sprite
+            # Update visual dimensions based on scaled sprite (hitbox stays 32x48)
             if idle_frames:
-                self.width = frame_width * scale_factor
-                self.height = frame_height * scale_factor
+                self.visual_width = frame_width * scale_factor
+                self.visual_height = frame_height * scale_factor
             
-            print(f"Loaded idle animation with {len(idle_frames)} frames ({self.width}x{self.height})")
+            print(f"Loaded idle animation with {len(idle_frames)} frames (visual: {self.visual_width}x{self.visual_height}, hitbox: {self.width}x{self.height})")
             
             # Load attack sprite sheet
             attack_sheet = SpriteSheet(attack_path)
@@ -727,12 +745,12 @@ class Samurai2(Character):
             idle_animation = Animation(tinted_idle_frames, 0.15)
             self.animator.add_animation("idle", idle_animation)
             
-            # Update character dimensions based on scaled sprite
+            # Update visual dimensions based on scaled sprite (hitbox stays 32x48)
             if tinted_idle_frames:
-                self.width = frame_width * scale_factor
-                self.height = frame_height * scale_factor
+                self.visual_width = frame_width * scale_factor
+                self.visual_height = frame_height * scale_factor
             
-            print(f"Loaded AI idle animation with {len(tinted_idle_frames)} frames ({self.width}x{self.height})")
+            print(f"Loaded AI idle animation with {len(tinted_idle_frames)} frames (visual: {self.visual_width}x{self.visual_height}, hitbox: {self.width}x{self.height})")
             
             # Load attack sprite sheet
             attack_sheet = SpriteSheet(attack_path)
@@ -952,12 +970,14 @@ class YellowNinja(Character):
     
     def __init__(self, x: float, y: float, attack_sound=None, block_sound=None, pain_sound=None):
         """Initialize Yellow Ninja enemy."""
+        # Set sprite_scale BEFORE calling super().__init__ to ensure it's available for load_sprites()
+        self.sprite_scale = 2.25  # Slightly larger than player
+        
         super().__init__(x, y, facing_right=False, attack_sound=attack_sound, block_sound=block_sound, pain_sound=pain_sound)
         
         # Yellow Ninja appearance
         self.color = (255, 255, 0)  # Yellow fallback
         self.enemy_name = "Yellow Ninja"
-        self.sprite_scale = 2.25  # Slightly larger than player
         
         # AI behavior variables (Level 2 - slightly harder than Level 1)
         self.ai_timer = 0.0
@@ -1033,10 +1053,10 @@ class YellowNinja(Character):
             hit_frames_list = scale(hit_frames_list_raw, hit_w, hit_h)
             death_frames_list = scale(death_frames_list_raw, death_w, death_h)
             
-            # Update YellowNinja collision box to match scaled idle sprite
+            # Update YellowNinja visual dimensions (hitbox stays 32x48)
             if idle_frames_list:
-                self.width = int(idle_w * scale_factor)
-                self.height = int(idle_h * scale_factor)
+                self.visual_width = int(idle_w * scale_factor)
+                self.visual_height = int(idle_h * scale_factor)
                 # Compute baseline offset so visible feet (bbox.bottom) align to collision bottom
                 test_frame = idle_frames_list[0]
                 try:
@@ -1141,6 +1161,15 @@ class YellowNinja(Character):
             desired = "hit"
         elif self.is_attacking:
             desired = "attack"
+            # Handle attack ID tracking like base Character class
+            if self.current_attack_id != self.last_attack_id:
+                self.last_attack_id = self.current_attack_id
+                self.can_hit = False  # Reset hit capability for new attack
+                self.animator.play_animation("attack", True)
+                # Play attack sound effect
+                if self.attack_sound:
+                    self.attack_sound.play()
+                return  # Exit early since we've set the animation
         elif self.is_blocking:
             desired = "block"
         elif abs(self.velocity_x) > 10:
