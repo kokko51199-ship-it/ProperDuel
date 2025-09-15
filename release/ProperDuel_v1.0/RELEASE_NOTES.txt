@@ -1,0 +1,36 @@
+# Proper Duel v1.0 - Release Notes
+
+## New Features
+- Retro-style samurai fighting game with advanced combat mechanics
+- Cinematic MOKKU splash screen with ASCII art
+- **Advanced Parry System**: Quick SHIFT tap for parrying vs holding for blocking
+- **Visual Combat Feedback**: Green glow for parrying, blue glow for blocking
+- **Enemy Stunning**: Successful parries stun enemies for 1.5 seconds
+- Level selector menu for direct Level 2 access
+- Two challenging levels: Evil Twin (Level 1) and Yellow Ninja (Level 2)
+- Smooth 2D fighting mechanics with special attacks
+- Pixel art character animations with combat states
+- Dynamic sound effects and atmospheric background music (15% volume)
+
+## Combat Controls
+- **WASD**: Movement
+- **SPACE**: Attack
+- **Q**: Special Attack  
+- **SHIFT (Hold)**: Block (blue glow)
+- **SHIFT (Quick Tap)**: Parry (green glow) - 0.3s timing window
+- **ESC**: Pause/Menu
+
+## Technical Details
+- Single executable file (no installation required)
+- Compatible with Windows 10/11 (64-bit)
+- File size: ~43 MB
+- Built with Python + Pygame
+
+## Known Issues
+- None reported
+
+## Credits
+- Engine: Python + Pygame
+- Art Style: Pixel art sprites
+- Music: Original soundtrack
+- Combat System: Advanced timing-based mechanics

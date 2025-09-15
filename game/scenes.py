@@ -14,7 +14,7 @@ from game.resource_utils import sprite_path
 
 
 class SplashScene:
-    """Splash screen scene with Vic Vega branding."""
+    """Splash screen scene with Mokku branding."""
     
     def __init__(self, screen_width: int, screen_height: int):
         """Initialize the splash scene."""
@@ -108,30 +108,30 @@ class SplashScene:
         splash_surface = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
         splash_surface.fill((0, 0, 0, 0))  # Transparent background
         
-        # ASCII Art above VIC VEGA text - Simple character silhouette
+        # ASCII Art above MOKKU text - Simple character silhouette
         ascii_art = [
-            "################################################################",
-            "################################################################",
-            "################################################################",
-            "################################################################",
-            "################################################################",
-            "################################@@##############################",
-            "##############################@@@@@@############################",
-            "############################@@@@@@@@@@##########################",
-            "##########################@@@@@@@@@@@@@@########################",
-            "########################@@@@@@@@@@@@@@@@@@######################",
-            "######################@@@@@@@@@@@@@@@@@@@@@@####################",
-            "####################@@@@@@@@@@@@@@@@@@@@@@@@@@##################",
-            "##################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@################",
-            "################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##############",
-            "##############@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@############",
-            "############@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##########",
-            "##########@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@########",
-            "########@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@######",
-            "######@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@####",
-            "####@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##",
-            "##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
-            "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠋⠀⠀⠀⠀⢈⢽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⡀⢀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⣋⠂⠀⠐⠁⢼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠈⠀⠀⠀⠀⠀⠀⠈⠉⣉⡀⣀⡈⠭⣿⣿⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢤⣄⡀⠈⠉⠻⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⡖⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣿⣿⣷⣶⣶⣶⣦⣬⣭⣉⣉⣙⣛⠛⠛⠛⠛⠻⠿⠿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⣠⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣳⠋⣴⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⡿⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⡿⣿⣿⢿⣾⣿⣿⣿⡿⢃⣼⣷⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⣿⣿⣿⣿⣿⣵⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⠿⣫⣟⣽⣟⡿⣟⢯⠋⡹⠻⠟⡻⢣⠾⠣⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⢛⣿⠟⣿⣯⣿⣿⣿⣿⣿⡿⣟⣟⣩⡿⡵⠕⠋",
+            "⠞⢱⠋⠋⠈⠘⡈⠃⠀⠀⠈⠀⠁⠀⠃⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡸⠏⠸⠁⠙⡑⠛⠟⠙⠘⠸⠂⡟⠉⠑⠀⠀⠘",
+            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠠⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
         ]
         
         # Render ASCII art with neon pink glow
@@ -157,8 +157,8 @@ class SplashScene:
         except Exception as e:
             print(f"ASCII art rendering error: {e}")
         
-        # Render main text "VIC VEGA" with multiple shadow layers for depth
-        main_text = "VIC VEGA"
+        # Render main text "MOKKU" with multiple shadow layers for depth
+        main_text = "MOKKU"
         
         # Adjust position to be below ASCII art
         main_text_y = self.screen_height // 2 + 80  # Move down more to make room for ASCII art
@@ -380,20 +380,7 @@ class MainMenuScene:
             option_rect.y = menu_start_y + i * option_spacing
             screen.blit(option_text, option_rect)
         
-        # Instructions
-        instructions = [
-            "USE ARROW KEYS TO NAVIGATE",
-            "PRESS ENTER TO SELECT",
-            "ESC TO QUIT"
-        ]
-        
-        inst_start_y = self.screen_height - 120
-        for i, instruction in enumerate(instructions):
-            inst_text = self._render_pixel_text(instruction, self.font, (120, 120, 120), 1)
-            inst_rect = inst_text.get_rect()
-            inst_rect.centerx = self.screen_width // 2
-            inst_rect.y = inst_start_y + i * 25
-            screen.blit(inst_text, inst_rect)
+        # Instructions removed - cleaner main menu interface
 
 
 class LevelSelectScene:
@@ -527,20 +514,7 @@ class LevelSelectScene:
                 desc_rect.y = option_rect.bottom + 10
                 screen.blit(desc_text, desc_rect)
         
-        # Instructions
-        instructions = [
-            "USE ARROW KEYS TO NAVIGATE",
-            "PRESS ENTER TO SELECT",
-            "ESC TO GO BACK"
-        ]
-        
-        inst_start_y = self.screen_height - 100
-        for i, instruction in enumerate(instructions):
-            inst_text = self._render_pixel_text(instruction, self.font, (120, 120, 120), 1)
-            inst_rect = inst_text.get_rect()
-            inst_rect.centerx = self.screen_width // 2
-            inst_rect.y = inst_start_y + i * 25
-            screen.blit(inst_text, inst_rect)
+        # Instructions removed - cleaner level select interface
 
 
 class FightScene:
@@ -597,6 +571,10 @@ class FightScene:
         self.player_choice = None  # "spare" or "finish"
         self.dialogue_complete = False
         
+        # Parry state tracking
+        self.player1_is_parrying = False
+        self.player2_is_parrying = False
+        
         # Background
         self.bg_color = (50, 80, 50)  # Dark green fallback
         self.background_image = None
@@ -641,41 +619,76 @@ class FightScene:
         self.player2.block_sound = block_sound
         self.player2.pain_sound = pain_sound
     
-    def _render_debug_hitboxes(self, screen: pygame.Surface):
-        """Render debug hitboxes for characters and attacks."""
-        # Yellow boxes for character hitboxes
-        player_rect = pygame.Rect(self.player1.x, self.player1.y, self.player1.width, self.player1.height)
-        enemy_rect = pygame.Rect(self.player2.x, self.player2.y, self.player2.width, self.player2.height)
+    def _render_blocking_indicators(self, surface: pygame.Surface):
+        """Render visual indicators when characters are blocking (Energy Barrier + Weapon Glow)."""
+        import math
+        current_time = pygame.time.get_ticks()
         
-        pygame.draw.rect(screen, (255, 255, 0), player_rect, 2)  # Yellow outline for player
-        pygame.draw.rect(screen, (255, 255, 0), enemy_rect, 2)   # Yellow outline for enemy
+        # Player 1 blocking indicator
+        if self.player1.is_blocking:
+            self._render_character_blocking_effect(surface, self.player1, current_time, self.player1_is_parrying)
+            
+        # Player 2 blocking indicator  
+        if self.player2.is_blocking:
+            self._render_character_blocking_effect(surface, self.player2, current_time, self.player2_is_parrying)
+    
+    def _render_character_blocking_effect(self, surface: pygame.Surface, character, current_time, is_parrying=False):
+        """Render blocking effect for a specific character."""
+        import math
         
-        # Red squares for attack hitboxes (when attacking)
-        attack_range = 60  # Same as collision detection range
+        # Choose colors based on parrying state
+        if is_parrying:
+            # Green colors for parrying
+            barrier_base_color = (0, 255, 0)  # Green barrier
+            glow_base_color = (0, 255, 100)  # Green-tinted glow
+        else:
+            # Blue colors for normal blocking
+            barrier_base_color = (0, 100, 255)  # Blue barrier
+            glow_base_color = (100, 100, 255)  # Blue-tinted glow
         
-        # Player attack hitbox
-        if self.player1.is_attacking:
-            if self.player1.facing_right:
-                attack_x = self.player1.x + self.player1.width
-                attack_y = self.player1.y + (self.player1.height // 4)
-            else:
-                attack_x = self.player1.x - attack_range
-                attack_y = self.player1.y + (self.player1.height // 4)
+        # Energy barrier effect
+        barrier_width = 8
+        barrier_height = character.height - 10
+        barrier_alpha = 180 + int(40 * math.sin(current_time * 0.01))  # Pulsing effect
+        
+        # Position barrier in front of character based on facing direction
+        if character.facing_right:
+            barrier_x = character.x + character.width + 5
+        else:
+            barrier_x = character.x - barrier_width - 5
             
-            attack_rect = pygame.Rect(attack_x, attack_y, attack_range, self.player1.height // 2)
-            pygame.draw.rect(screen, (255, 0, 0), attack_rect, 2)  # Red outline for player attack
-            
-        # Enemy attack hitbox
-        if self.player2.is_attacking:
-            if self.player2.facing_right:
-                attack_x = self.player2.x + self.player2.width
-                attack_y = self.player2.y + (self.player2.height // 4)
-            else:
-                attack_x = self.player2.x - attack_range
-                attack_y = self.player2.y + (self.player2.height // 4)
-            
-            attack_rect = pygame.Rect(attack_x, attack_y, attack_range, self.player2.height // 2)
-            pygame.draw.rect(screen, (255, 0, 0), attack_rect, 2)  # Red outline for enemy attack
+        barrier_y = character.y + 5
+        
+        # Create energy barrier surface with transparency
+        barrier_surface = pygame.Surface((barrier_width, barrier_height))
+        barrier_surface.set_alpha(barrier_alpha)
+        
+        # Gradient effect - multiple layers for energy look
+        for i in range(barrier_width):
+            alpha_mult = 1.0 - (i / barrier_width) * 0.5
+            r = int(barrier_base_color[0] * alpha_mult) if barrier_base_color[0] > 0 else 0
+            g = int(barrier_base_color[1] * alpha_mult) if barrier_base_color[1] > 0 else 0
+            b = int(barrier_base_color[2] * alpha_mult) if barrier_base_color[2] > 0 else 0
+            color = (r, g, b)
+            pygame.draw.rect(barrier_surface, color, (i, 0, 1, barrier_height))
+        
+        surface.blit(barrier_surface, (barrier_x, barrier_y))
+        
+        # Weapon glow effect (overlay on character sprite area)
+        glow_intensity = 150 + int(50 * math.sin(current_time * 0.015))  # Pulsing glow
+        glow_color = (glow_intensity if glow_base_color[0] > 0 else glow_intensity // 3,
+                      glow_intensity if glow_base_color[1] > 0 else glow_intensity // 3,
+                      glow_intensity if glow_base_color[2] > 0 else 255)
+        
+        # Create glow outline around character
+        glow_surface = pygame.Surface((character.width + 6, character.height + 6))
+        glow_surface.set_alpha(80)
+        glow_surface.fill(glow_color)
+        
+        # Render glow behind character
+        glow_x = character.x - 3
+        glow_y = character.y - 3
+        surface.blit(glow_surface, (glow_x, glow_y))
     
     def update_pause(self, dt: float, paused: bool):
         """Update pause state and blinking animation."""
@@ -737,6 +750,10 @@ class FightScene:
         if self.match_over:
             return
         
+        # Track parrying state for visual effects
+        self.player1_is_parrying = player1_input.is_parrying
+        self.player2_is_parrying = False  # AI doesn't parry for now
+        
         # Handle round transition
         if self.round_over:
             self.round_end_timer += dt
@@ -795,16 +812,50 @@ class FightScene:
         # Check if AI hits player with regular attack
         p2_attack = self.player2.get_attack_rect()
         if p2_attack and p2_attack.colliderect(self.player1.get_rect()):
-            if self.player1.take_damage(3, self.player2.x):  # Pass attacker's position
+            # Check if player is parrying
+            if self.player1_is_parrying:
+                print("PARRY! Player parried Evil Twin's attack!")
+                # Successful parry - stun the attacker and drain their stamina
+                self._apply_parry_success(self.player2, self.player1)
+                self.player2.can_hit = False  # Prevent multiple parry triggers
+            elif self.player1.take_damage(3, self.player2.x):  # Pass attacker's position
                 print("Evil Twin hits Player!")
                 self.player2.can_hit = False  # Prevent multiple hits from same attack
         
         # Check if AI hits player with special attack
         p2_special_attack = self.player2.get_special_attack_rect()
         if p2_special_attack and p2_special_attack.colliderect(self.player1.get_rect()):
-            if self.player1.take_damage(8, self.player2.x):  # Higher damage for special attack
+            # Check if player is parrying
+            if self.player1_is_parrying:
+                print("PARRY! Player parried Evil Twin's special attack!")
+                # Successful parry - stun the attacker and drain their stamina
+                self._apply_parry_success(self.player2, self.player1)
+                self.player2.can_special_hit = False  # Prevent multiple parry triggers
+            elif self.player1.take_damage(8, self.player2.x):  # Higher damage for special attack
                 print("Evil Twin special hits Player!")
                 self.player2.can_special_hit = False  # Prevent multiple hits from same special attack
+    
+    def _apply_parry_success(self, stunned_character, parrying_character):
+        """Apply effects of a successful parry: stun attacker, drain stamina."""
+        # Add stun effect to the attacker
+        stunned_character.is_stunned = True
+        stunned_character.stun_duration = 1.5  # 1.5 seconds of stun
+        
+        # Drain all stamina from the attacker (affects special attack cooldown)
+        if hasattr(stunned_character, 'special_cooldown'):
+            stunned_character.special_cooldown = max(stunned_character.special_cooldown, 5.0)  # Add 5 second penalty
+        
+        # Stop attacker's current attack
+        stunned_character.is_attacking = False
+        stunned_character.attack_timer = 0.0
+        stunned_character.can_hit = False
+        stunned_character.can_special_hit = False
+        
+        # Visual feedback - force attacker to take hit animation
+        stunned_character.is_hit = True
+        stunned_character.hit_timer = 0.3  # Brief hit animation
+        
+        print(f"Parry success! {stunned_character.__class__.__name__} is stunned for 1.5 seconds!")
     
     def _end_round(self, result: str):
         """End the current round and determine winner."""
@@ -912,8 +963,8 @@ class FightScene:
         self.player1.render(surface)
         self.player2.render(surface)
         
-        # Debug: Draw character hitboxes (yellow) and attack hitboxes (red)
-        self._render_debug_hitboxes(surface)
+        # Render blocking indicators
+        self._render_blocking_indicators(surface)
         
         # Render UI
         self._render_ui(surface)
@@ -1060,9 +1111,9 @@ class FightScene:
         # Round winner text (large pixelated)
         if self.round_winner:
             if self.round_winner == "Draw":
-                winner_text = self._render_pixel_text("ROUND DRAW!", self.mega_font, (255, 255, 0), 3)
+                winner_text = self._render_pixel_text("DRAW!", self.mega_font, (255, 255, 0), 3)
             else:
-                winner_text = self._render_pixel_text(f"{self.round_winner.upper()} WINS!", self.mega_font, (255, 255, 255), 3)
+                winner_text = self._render_pixel_text(f"{self.round_winner.upper()} WINS!", self.large_font, (255, 255, 255), 2)
             winner_rect = winner_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 60))
             surface.blit(winner_text, winner_rect)
         
@@ -1086,14 +1137,14 @@ class FightScene:
         overlay.fill((0, 0, 0))
         surface.blit(overlay, (0, 0))
         
-        # Match winner text (mega pixelated with gold color)
+        # Match winner text (large pixelated with gold color)
         if self.match_winner:
-            winner_text = self._render_pixel_text(f"{self.match_winner.upper()} WINS!", self.mega_font, (255, 215, 0), 4)
+            winner_text = self._render_pixel_text(f"{self.match_winner.upper()} WINS!", self.large_font, (255, 215, 0), 2)
             winner_rect = winner_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 80))
             surface.blit(winner_text, winner_rect)
         
-        # Final score (large pixelated)
-        final_score = self._render_pixel_text(f"FINAL: {self.player_wins} - {self.ai_wins}", self.large_font, (255, 255, 255), 3)
+        # Final score (medium pixelated)
+        final_score = self._render_pixel_text(f"FINAL: {self.player_wins} - {self.ai_wins}", self.font, (255, 255, 255), 2)
         score_rect = final_score.get_rect(center=(self.screen_width // 2, self.screen_height // 2))
         surface.blit(final_score, score_rect)
         
@@ -1272,18 +1323,18 @@ class FightScene:
         elif self.dialogue_phase == "outcome":
             # Show outcome based on player choice
             if self.player_choice == "spare":
-                outcome_text = "You show mercy... The Evil Twin retreats into the shadows."
+                outcome_text = "You spare him... Evil Twin retreats."
                 outcome_color = (100, 255, 100)  # Green
             else:
-                outcome_text = "You finish what was started... The Evil Twin is no more."
+                outcome_text = "Evil Twin defeated."
                 outcome_color = (255, 100, 100)  # Red
                 
-            outcome_surface = self._render_pixel_text(outcome_text, self.font, outcome_color, 2)
+            outcome_surface = self._render_pixel_text(outcome_text, self.font, outcome_color, 1)
             surface.blit(outcome_surface, (text_x, text_y))
             
             # Continue instruction
             continue_text = self._render_pixel_text("Press SPACE to continue...", self.small_font, (150, 150, 150), 1)
-            surface.blit(continue_text, (text_x, text_y + 40))
+            surface.blit(continue_text, (text_x, text_y + 25))
 
 
 class Level2Scene:
@@ -1325,11 +1376,17 @@ class Level2Scene:
         self.pause_blink_timer = 0.0
         self.pause_blink_speed = 2.0  # Blinks per second
         
-        # Dialogue state (for post-match victory)
+        # Dialogue state (using Level 1's proven system)
         self.showing_dialogue = False
-        self.dialogue_phase = "victory"
+        self.dialogue_phase = "threat"  # "threat", "choices", "outcome"
         self.dialogue_timer = 0.0
+        self.selected_choice = 0  # 0 = Spare, 1 = Finish
+        self.player_choice = None  # "spare" or "finish"
         self.dialogue_complete = False
+        
+        # Parry state tracking
+        self.player1_is_parrying = False
+        self.player2_is_parrying = False
         
         # Intro state (for Level 2 intro)
         self.showing_intro = False  # No intro needed for Level 2
@@ -1468,42 +1525,77 @@ class Level2Scene:
         print(f"Positioned characters on ground surface (Y: {self.ground_surface_y}) - Player: {self.player1.y}, Enemy: {self.player2.y}")
         print(f"Character hitbox: {self.player1.width}x{self.player1.height}, bottom edge at Y: {self.player1.y + self.player1.height}")
         
-    def _render_debug_hitboxes(self, screen: pygame.Surface):
-        """Render debug hitboxes for characters and attacks."""
-        # Yellow boxes for character hitboxes
-        player_rect = pygame.Rect(self.player1.x, self.player1.y, self.player1.width, self.player1.height)
-        enemy_rect = pygame.Rect(self.player2.x, self.player2.y, self.player2.width, self.player2.height)
+    def _render_blocking_indicators(self, surface: pygame.Surface):
+        """Render visual indicators when characters are blocking (Energy Barrier + Weapon Glow)."""
+        import math
+        current_time = pygame.time.get_ticks()
         
-        pygame.draw.rect(screen, (255, 255, 0), player_rect, 2)  # Yellow outline for player
-        pygame.draw.rect(screen, (255, 255, 0), enemy_rect, 2)   # Yellow outline for enemy
+        # Player 1 blocking indicator
+        if self.player1.is_blocking:
+            self._render_character_blocking_effect(surface, self.player1, current_time, self.player1_is_parrying)
+            
+        # Player 2 blocking indicator  
+        if self.player2.is_blocking:
+            self._render_character_blocking_effect(surface, self.player2, current_time, self.player2_is_parrying)
+    
+    def _render_character_blocking_effect(self, surface: pygame.Surface, character, current_time, is_parrying=False):
+        """Render blocking effect for a specific character."""
+        import math
         
-        # Red squares for attack hitboxes (when attacking)
-        attack_range = 60  # Same as collision detection range
+        # Choose colors based on parrying state
+        if is_parrying:
+            # Green colors for parrying
+            barrier_base_color = (0, 255, 0)  # Green barrier
+            glow_base_color = (0, 255, 100)  # Green-tinted glow
+        else:
+            # Blue colors for normal blocking
+            barrier_base_color = (0, 100, 255)  # Blue barrier
+            glow_base_color = (100, 100, 255)  # Blue-tinted glow
         
-        # Player attack hitbox
-        if self.player1.is_attacking:
-            if self.player1.facing_right:
-                attack_x = self.player1.x + self.player1.width
-                attack_y = self.player1.y + (self.player1.height // 4)
-            else:
-                attack_x = self.player1.x - attack_range
-                attack_y = self.player1.y + (self.player1.height // 4)
+        # Energy barrier effect
+        barrier_width = 8
+        barrier_height = character.height - 10
+        barrier_alpha = 180 + int(40 * math.sin(current_time * 0.01))  # Pulsing effect
+        
+        # Position barrier in front of character based on facing direction
+        if character.facing_right:
+            barrier_x = character.x + character.width + 5
+        else:
+            barrier_x = character.x - barrier_width - 5
             
-            attack_rect = pygame.Rect(attack_x, attack_y, attack_range, self.player1.height // 2)
-            pygame.draw.rect(screen, (255, 0, 0), attack_rect, 2)  # Red outline for player attack
-            
-        # Enemy attack hitbox
-        if self.player2.is_attacking:
-            if self.player2.facing_right:
-                attack_x = self.player2.x + self.player2.width
-                attack_y = self.player2.y + (self.player2.height // 4)
-            else:
-                attack_x = self.player2.x - attack_range
-                attack_y = self.player2.y + (self.player2.height // 4)
-            
-            attack_rect = pygame.Rect(attack_x, attack_y, attack_range, self.player2.height // 2)
-            pygame.draw.rect(screen, (255, 0, 0), attack_rect, 2)  # Red outline for enemy attack
-            
+        barrier_y = character.y + 5
+        
+        # Create energy barrier surface with transparency
+        barrier_surface = pygame.Surface((barrier_width, barrier_height))
+        barrier_surface.set_alpha(barrier_alpha)
+        
+        # Gradient effect - multiple layers for energy look
+        for i in range(barrier_width):
+            alpha_mult = 1.0 - (i / barrier_width) * 0.5
+            r = int(barrier_base_color[0] * alpha_mult) if barrier_base_color[0] > 0 else 0
+            g = int(barrier_base_color[1] * alpha_mult) if barrier_base_color[1] > 0 else 0
+            b = int(barrier_base_color[2] * alpha_mult) if barrier_base_color[2] > 0 else 0
+            color = (r, g, b)
+            pygame.draw.rect(barrier_surface, color, (i, 0, 1, barrier_height))
+        
+        surface.blit(barrier_surface, (barrier_x, barrier_y))
+        
+        # Weapon glow effect (overlay on character sprite area)
+        glow_intensity = 150 + int(50 * math.sin(current_time * 0.015))  # Pulsing glow
+        glow_color = (glow_intensity if glow_base_color[0] > 0 else glow_intensity // 3,
+                      glow_intensity if glow_base_color[1] > 0 else glow_intensity // 3,
+                      glow_intensity if glow_base_color[2] > 0 else 255)
+        
+        # Create glow outline around character
+        glow_surface = pygame.Surface((character.width + 6, character.height + 6))
+        glow_surface.set_alpha(80)
+        glow_surface.fill(glow_color)
+        
+        # Render glow behind character
+        glow_x = character.x - 3
+        glow_y = character.y - 3
+        surface.blit(glow_surface, (glow_x, glow_y))
+        
     def _render_pixel_text(self, text: str, font: pygame.font.Font, color: tuple, scale: int = 2):
         """Render text with pixelated, retro look by scaling up small text."""
         small_surface = font.render(text, False, color)
@@ -1549,15 +1641,53 @@ class Level2Scene:
         return "continue"
     
     def _handle_dialogue_input(self, events: list) -> str:
-        """Handle input during victory dialogue."""
+        """Handle input during dialogue sequences (using Level 1's proven system)."""
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
-                    self.dialogue_complete = True
-                    return "level3"  # Progress to next level
+                if self.dialogue_phase == "choices":
+                    # Handle choice selection
+                    if event.key == pygame.K_1:
+                        self.selected_choice = 0
+                    elif event.key == pygame.K_2:
+                        self.selected_choice = 1
+                    elif event.key == pygame.K_UP:
+                        self.selected_choice = 0
+                    elif event.key == pygame.K_DOWN:
+                        self.selected_choice = 1
+                    elif event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                        # Confirm choice
+                        self.player_choice = "spare" if self.selected_choice == 0 else "finish"
+                        self.dialogue_phase = "outcome"
+                        self.dialogue_timer = 0.0
+                        print(f"Player chose: {self.player_choice}")
+                        
+                elif self.dialogue_phase == "outcome":
+                    # Handle continue after outcome
+                    if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                        self.dialogue_complete = True
+                        return "level3"  # Progress to next level
                 elif event.key == pygame.K_ESCAPE:
                     return "menu"
         return "continue"
+        
+    def _update_dialogue(self, dt: float):
+        """Update dialogue progression and timers (using Level 1's proven system)."""
+        if not self.showing_dialogue:
+            return
+            
+        self.dialogue_timer += dt
+        
+        # Auto-progress from threat to choices after 3 seconds
+        if self.dialogue_phase == "threat" and self.dialogue_timer >= 3.0:
+            self.dialogue_phase = "choices"
+            self.dialogue_timer = 0.0
+            
+        # Check if dialogue is complete
+        if self.dialogue_complete:
+            self.match_over = True
+            self.match_winner = "Player"
+            self.showing_dialogue = False
+            print(f"LEVEL 2 COMPLETE! Player wins with choice: {self.player_choice}")
         
     def update(self, dt: float, player1_input=None, player2_input=None):
         """Update Level 2 scene."""
@@ -1570,7 +1700,7 @@ class Level2Scene:
         
         # Handle dialogue
         if self.showing_dialogue:
-            self.dialogue_timer += dt
+            self._update_dialogue(dt)
             return
         
         # Handle pause
@@ -1581,6 +1711,13 @@ class Level2Scene:
         # Handle match over state
         if self.match_over:
             return
+        
+        # Track parrying state for visual effects
+        if player1_input:
+            self.player1_is_parrying = player1_input.is_parrying
+        else:
+            self.player1_is_parrying = False
+        self.player2_is_parrying = False  # AI doesn't parry for now
         
         # Handle round end
         if self.round_over:
@@ -1644,7 +1781,13 @@ class Level2Scene:
         # Check if enemy hits player with regular attack
         p2_attack = self.player2.get_attack_rect()
         if p2_attack and p2_attack.colliderect(self.player1.get_rect()):
-            if self.player1.take_damage(3, self.player2.x):  # Pass attacker's position (same as Level 1)
+            # Check if player is parrying
+            if self.player1_is_parrying:
+                print("PARRY! Player parried Yellow Ninja's attack!")
+                # Successful parry - stun the attacker and drain their stamina
+                self._apply_parry_success(self.player2, self.player1)
+                self.player2.can_hit = False  # Prevent multiple parry triggers
+            elif self.player1.take_damage(3, self.player2.x):  # Pass attacker's position (same as Level 1)
                 print("Yellow Ninja hits Player!")
                 self.player2.can_hit = False  # Prevent multiple hits from same attack
                 if self.pain_sound:
@@ -1653,11 +1796,39 @@ class Level2Scene:
         # Check if enemy hits player with special attack
         p2_special_attack = self.player2.get_special_attack_rect()
         if p2_special_attack and p2_special_attack.colliderect(self.player1.get_rect()):
-            if self.player1.take_damage(8, self.player2.x):  # Higher damage for special attack (same as Level 1)
+            # Check if player is parrying
+            if self.player1_is_parrying:
+                print("PARRY! Player parried Yellow Ninja's special attack!")
+                # Successful parry - stun the attacker and drain their stamina
+                self._apply_parry_success(self.player2, self.player1)
+                self.player2.can_special_hit = False  # Prevent multiple parry triggers
+            elif self.player1.take_damage(8, self.player2.x):  # Higher damage for special attack (same as Level 1)
                 print("Yellow Ninja special hits Player!")
                 self.player2.can_special_hit = False  # Prevent multiple hits from same special attack
                 if self.pain_sound:
                     self.pain_sound.play()
+    
+    def _apply_parry_success(self, stunned_character, parrying_character):
+        """Apply effects of a successful parry: stun attacker, drain stamina."""
+        # Add stun effect to the attacker
+        stunned_character.is_stunned = True
+        stunned_character.stun_duration = 1.5  # 1.5 seconds of stun
+        
+        # Drain all stamina from the attacker (affects special attack cooldown)
+        if hasattr(stunned_character, 'special_cooldown'):
+            stunned_character.special_cooldown = max(stunned_character.special_cooldown, 5.0)  # Add 5 second penalty
+        
+        # Stop attacker's current attack
+        stunned_character.is_attacking = False
+        stunned_character.attack_timer = 0.0
+        stunned_character.can_hit = False
+        stunned_character.can_special_hit = False
+        
+        # Visual feedback - force attacker to take hit animation
+        stunned_character.is_hit = True
+        stunned_character.hit_timer = 0.3  # Brief hit animation
+        
+        print(f"Parry success! {stunned_character.__class__.__name__} is stunned for 1.5 seconds!")
     
     def _is_facing_target(self, attacker, target) -> bool:
         """Check if attacker is facing the target."""
@@ -1700,11 +1871,11 @@ class Level2Scene:
         
         # Check for match end
         if self.player_wins >= self.wins_needed:
-            self.match_over = True
-            self.match_winner = "Player"
-            # Show victory dialogue after a delay
-            self.dialogue_timer = 0.0
+            # Player wins - trigger dialogue instead of immediate match end (using Level 1's system)
             self.showing_dialogue = True
+            self.dialogue_phase = "threat"
+            self.dialogue_timer = 0.0
+            print(f"PLAYER VICTORY! Starting Yellow Ninja dialogue sequence...")
         elif self.ai_wins >= self.wins_needed:
             self.match_over = True
             self.match_winner = "Yellow Ninja"
@@ -1764,15 +1935,15 @@ class Level2Scene:
         
         # Handle dialogue rendering
         if self.showing_dialogue:
-            self._render_victory_dialogue(screen)
+            self._render_dialogue_box(screen)
             return
         
         # Render characters
         self.player1.render(screen)
         self.player2.render(screen)
         
-        # Debug: Draw character hitboxes (yellow) and attack hitboxes (red)
-        self._render_debug_hitboxes(screen)
+        # Render blocking indicators
+        self._render_blocking_indicators(screen)
         
         # Draw UI - identical to Level 1
         self._render_health_bar(screen, 20, 90, self.player1.health, self.player1.max_health, (100, 100, 255))
@@ -1795,28 +1966,126 @@ class Level2Scene:
         elif self.match_over and not self.showing_dialogue:
             self._render_match_end_overlay(screen)
     
-    def _render_victory_dialogue(self, screen: pygame.Surface):
-        """Render victory dialogue for Level 2."""
-        # Dark overlay
-        overlay = pygame.Surface((self.screen_width, self.screen_height))
-        overlay.set_alpha(180)
-        overlay.fill((0, 0, 0))
-        screen.blit(overlay, (0, 0))
+    def _render_dialogue_box(self, surface: pygame.Surface):
+        """Render retro dialogue box with Yellow Ninja's final words and player choices (using Level 1's proven system)."""
+        # Create dialogue box background
+        box_width = 600
+        box_height = 200
+        box_x = (self.screen_width - box_width) // 2
+        box_y = self.screen_height - box_height - 50
         
-        # Victory message
-        victory_text = self._render_pixel_text("LEVEL 2 COMPLETE!", self.large_font, (255, 255, 0), 3)
-        victory_rect = victory_text.get_rect(center=(self.screen_width // 2, 200))
-        screen.blit(victory_text, victory_rect)
+        # Dark background with retro border
+        border_thickness = 4
         
-        # Subtitle
-        subtitle_text = self._render_pixel_text("You defeated the Yellow Ninja!", self.font, (255, 255, 255), 2)
-        subtitle_rect = subtitle_text.get_rect(center=(self.screen_width // 2, 280))
-        screen.blit(subtitle_text, subtitle_rect)
+        # Outer border (bright)
+        outer_rect = pygame.Rect(box_x - border_thickness, box_y - border_thickness, 
+                               box_width + border_thickness * 2, box_height + border_thickness * 2)
+        pygame.draw.rect(surface, (255, 255, 255), outer_rect)
         
-        # Continue prompt
-        continue_text = self._render_pixel_text("Press SPACE to continue", self.font, (200, 200, 200), 2)
-        continue_rect = continue_text.get_rect(center=(self.screen_width // 2, 400))
-        screen.blit(continue_text, continue_rect)
+        # Inner border (dark)
+        inner_border = pygame.Rect(box_x - border_thickness + 2, box_y - border_thickness + 2,
+                                 box_width + (border_thickness - 2) * 2, box_height + (border_thickness - 2) * 2)
+        pygame.draw.rect(surface, (100, 100, 100), inner_border)
+        
+        # Main background
+        main_rect = pygame.Rect(box_x, box_y, box_width, box_height)
+        pygame.draw.rect(surface, (20, 20, 40), main_rect)
+        
+        # Character portrait area (Yellow Ninja)
+        portrait_size = 80
+        portrait_x = box_x + 20
+        portrait_y = box_y + 20
+        portrait_rect = pygame.Rect(portrait_x, portrait_y, portrait_size, portrait_size)
+        
+        # Draw background for portrait
+        pygame.draw.rect(surface, (20, 20, 40), portrait_rect)
+        
+        # Load and display Yellow Ninja portrait
+        try:
+            # Load the Yellow Ninja portrait image (portrait1.png)
+            from game.resource_utils import sprite_path
+            portrait_path = sprite_path("portrait1.png")
+            portrait_image = pygame.image.load(portrait_path).convert_alpha()
+            
+            # Scale portrait to fit the box (with some padding)
+            portrait_inner_size = portrait_size - 6  # Leave 3px border on each side
+            scaled_portrait = pygame.transform.scale(portrait_image, (portrait_inner_size, portrait_inner_size))
+            
+            # Center the portrait in the box
+            portrait_x_pos = portrait_x + (portrait_size - portrait_inner_size) // 2
+            portrait_y_pos = portrait_y + (portrait_size - portrait_inner_size) // 2
+            surface.blit(scaled_portrait, (portrait_x_pos, portrait_y_pos))
+            
+        except Exception as e:
+            # Fallback to colored rectangle with "?" if portrait loading fails
+            print(f"Could not load Yellow Ninja portrait: {e}")
+            pygame.draw.rect(surface, (80, 80, 40), portrait_rect)
+            
+            # Draw a simple "?" as placeholder
+            question_text = self._render_pixel_text("?", self.large_font, (255, 255, 200), 3)
+            question_rect = question_text.get_rect(center=(portrait_x + portrait_size//2, portrait_y + portrait_size//2))
+            surface.blit(question_text, question_rect)
+        
+        # Portrait border
+        pygame.draw.rect(surface, (200, 200, 200), portrait_rect, 2)
+        
+        # Yellow Ninja name
+        name_text = self._render_pixel_text("YELLOW NINJA", self.font, (255, 255, 100), 2)
+        name_x = portrait_x + portrait_size + 20
+        name_y = portrait_y
+        surface.blit(name_text, (name_x, name_y))
+        
+        # Dialogue text area
+        text_x = name_x
+        text_y = name_y + 30
+        text_width = box_width - (text_x - box_x) - 20
+        
+        if self.dialogue_phase == "threat":
+            # Yellow Ninja's threat
+            threat_text = "My skills are unmatched... you cannot defeat me!"
+            dialogue_surface = self._render_pixel_text(threat_text, self.font, (255, 255, 255), 2)
+            surface.blit(dialogue_surface, (text_x, text_y))
+            
+        elif self.dialogue_phase == "choices":
+            # Player choice prompt
+            prompt_text = "What do you do?"
+            prompt_surface = self._render_pixel_text(prompt_text, self.font, (255, 255, 255), 2)
+            surface.blit(prompt_surface, (text_x, text_y))
+            
+            # Choice options
+            choice_y = text_y + 40
+            
+            # Option 1: Spare
+            spare_color = (255, 255, 100) if self.selected_choice == 0 else (200, 200, 200)
+            spare_prefix = "> " if self.selected_choice == 0 else "  "
+            spare_text = self._render_pixel_text(f"{spare_prefix}1. Show mercy", self.font, spare_color, 2)
+            surface.blit(spare_text, (text_x, choice_y))
+            
+            # Option 2: Finish
+            finish_color = (255, 255, 100) if self.selected_choice == 1 else (200, 200, 200)
+            finish_prefix = "> " if self.selected_choice == 1 else "  "
+            finish_text = self._render_pixel_text(f"{finish_prefix}2. Finish him", self.font, finish_color, 2)
+            surface.blit(finish_text, (text_x, choice_y + 25))
+            
+            # Instructions
+            inst_text = self._render_pixel_text("Use 1/2 or UP/DOWN to choose, ENTER to confirm", self.small_font, (150, 150, 150), 1)
+            surface.blit(inst_text, (text_x, choice_y + 60))
+            
+        elif self.dialogue_phase == "outcome":
+            # Show outcome based on player choice
+            if self.player_choice == "spare":
+                outcome_text = "You spare the Yellow Ninja... He vanishes into the shadows."
+                outcome_color = (100, 255, 100)  # Green
+            else:
+                outcome_text = "The Yellow Ninja has been defeated... Your path continues."
+                outcome_color = (255, 100, 100)  # Red
+                
+            outcome_surface = self._render_pixel_text(outcome_text, self.font, outcome_color, 2)
+            surface.blit(outcome_surface, (text_x, text_y))
+            
+            # Continue instruction
+            continue_text = self._render_pixel_text("Press SPACE to continue...", self.small_font, (150, 150, 150), 1)
+            surface.blit(continue_text, (text_x, text_y + 40))
     
     def _render_round_info(self, surface: pygame.Surface):
         """Render round and score information."""
@@ -1859,9 +2128,9 @@ class Level2Scene:
         # Round result
         if self.round_winner:
             if self.round_winner == "Draw":
-                result_text = self._render_pixel_text("DRAW!", self.large_font, (255, 255, 0), 3)
+                result_text = self._render_pixel_text("DRAW!", self.large_font, (255, 255, 0), 2)
             else:
-                result_text = self._render_pixel_text(f"{self.round_winner.upper()} WINS ROUND!", self.large_font, (255, 255, 0), 3)
+                result_text = self._render_pixel_text(f"{self.round_winner.upper()} WINS!", self.large_font, (255, 255, 0), 2)
             result_rect = result_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2))
             surface.blit(result_text, result_rect)
     

@@ -48,6 +48,11 @@ class Character:
         self.attack_cooldown_time = 0.5  # seconds
         self.current_attack_id = 0  # Track unique attacks
         self.attack_hit_frame = 4  # Hit occurs on frame 5 (0-indexed frame 4) out of 6
+        
+        # Stun state (for parry effects)
+        self.is_stunned = False
+        self.stun_duration = 0.0
+        self.stun_timer = 0.0
         self.can_hit = False  # Whether this attack can deal damage
         
         # Special attack state
@@ -107,6 +112,18 @@ class Character:
             # Only update animations for death sequence
             self.animator.update(dt)
             return
+        
+        # Update stun state
+        if self.is_stunned:
+            self.stun_timer += dt
+            if self.stun_timer >= self.stun_duration:
+                self.is_stunned = False
+                self.stun_timer = 0.0
+                self.stun_duration = 0.0
+            else:
+                # While stunned, only update animations, no input or physics
+                self.animator.update(dt)
+                return
             
         # Handle input
         self._handle_input(player_input, dt)
@@ -1109,6 +1126,27 @@ class YellowNinja(Character):
     
     def update(self, dt: float, gravity: float, ground_y: float, opponent: 'Character', arena_left: float = -100, arena_right: float = 900):
         """Update Yellow Ninja with AI behavior.""" 
+        # Don't process AI or physics if dead
+        if self.is_dead:
+            # Only update animations for death sequence
+            if self.animator:
+                self.animator.update(dt)
+            return
+        
+        # Update stun state (same as base Character class)
+        if self.is_stunned:
+            self.stun_timer += dt
+            if self.stun_timer >= self.stun_duration:
+                self.is_stunned = False
+                self.stun_timer = 0.0
+                self.stun_duration = 0.0
+            else:
+                # While stunned, only update animations, no AI or physics
+                self._update_animation_state()
+                if self.animator:
+                    self.animator.update(dt)
+                return
+        
         # Update combat timers manually
         self._update_combat(dt)
         # Update blink timer if active
@@ -1157,6 +1195,8 @@ class YellowNinja(Character):
         desired = "idle"
         if self.is_dead:
             desired = "dead"
+        elif self.is_stunned:
+            desired = "hit"  # Use hit animation for stun effect
         elif self.is_hit and self.hit_duration > 0:
             desired = "hit"
         elif self.is_attacking:
@@ -1182,7 +1222,7 @@ class YellowNinja(Character):
     
     def _update_ai(self, dt: float, player: 'Character'):
         """Enhanced AI behavior for Yellow Ninja."""
-        if self.is_dead:
+        if self.is_dead or self.is_stunned:
             return
         
         self.ai_timer += dt

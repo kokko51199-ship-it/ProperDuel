@@ -352,7 +352,7 @@ class GameEngine:
         """Play intense battle music during fights."""
         try:
             pygame.mixer.music.load(self.battle_music_path)
-            pygame.mixer.music.set_volume(0.4)  # 40% volume for battle intensity
+            pygame.mixer.music.set_volume(0.15)  # 15% volume for battle intensity
             pygame.mixer.music.play(-1)  # Loop indefinitely
             print(f"Battle music loaded and playing: {self.battle_music_path}")
         except Exception as e:

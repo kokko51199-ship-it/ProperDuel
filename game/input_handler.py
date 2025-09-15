@@ -1,5 +1,5 @@
 """
-Input Handler
+Input management for the fighting game.
 Manages keyboard input for player 1 and AI logic for player 2.
 """
 
@@ -10,7 +10,20 @@ from typing import Dict, Any
 
 
 class PlayerInput:
-    """Represents input state for a single player."""
+    """Represents the current input state for a player."""
+    
+    def __init__(self):
+        print("DEBUG: PlayerInput.__init__ called")
+        self.left = False
+        self.right = False
+        self.up = False
+        self.down = False
+        self.attack = False
+        self.block = False
+        self.special = False
+        self.is_parrying = False  # True during parry window (quick tap)
+        self.parry_window_time = 0.0  # Time remaining in parry window
+        print(f"DEBUG: PlayerInput.__init__ finished, has is_parrying: {hasattr(self, 'is_parrying')}")
     
     def __init__(self):
         self.left = False
@@ -210,11 +223,25 @@ class InputHandler:
         # Input states
         self.player1_input = PlayerInput()
         
+        # Ensure parry attributes exist (defensive programming against import cache issues)
+        if not hasattr(self.player1_input, 'is_parrying'):
+            self.player1_input.is_parrying = False
+        if not hasattr(self.player1_input, 'parry_window_time'):
+            self.player1_input.parry_window_time = 0.0
+            
+        print(f"DEBUG: Created PlayerInput with attributes: {dir(self.player1_input)}")
+        print(f"DEBUG: is_parrying attribute exists: {hasattr(self.player1_input, 'is_parrying')}")
+        
         # AI controller for player 2
         self.ai_controller = AIController()
         
         # Key states for event handling
         self.keys_pressed = set()
+        
+        # Parry timing tracking
+        self.shift_press_time = 0.0  # How long SHIFT has been held
+        self.shift_was_pressed = False  # Previous frame SHIFT state
+        self.parry_window_duration = 0.3  # 0.3 second parry window
     
     def handle_event(self, event: pygame.event.Event):
         """Handle pygame events."""
@@ -228,14 +255,46 @@ class InputHandler:
         # Get current key states
         keys = pygame.key.get_pressed()
         
+        # Handle SHIFT key timing for parry vs block detection
+        shift_currently_pressed = keys[self.player1_keys['block']]
+        
+        if shift_currently_pressed:
+            if not self.shift_was_pressed:
+                # SHIFT just pressed - start timing
+                self.shift_press_time = 0.0
+            else:
+                # SHIFT still held - accumulate time
+                self.shift_press_time += dt
+        else:
+            if self.shift_was_pressed:
+                # SHIFT just released - check if it was a quick tap (parry)
+                if self.shift_press_time <= self.parry_window_duration:
+                    # Quick tap detected - trigger parry window
+                    self.player1_input.is_parrying = True
+                    self.player1_input.parry_window_time = self.parry_window_duration
+            self.shift_press_time = 0.0
+        
+        # Update parry window countdown
+        if self.player1_input.is_parrying:
+            self.player1_input.parry_window_time -= dt
+            if self.player1_input.parry_window_time <= 0.0:
+                self.player1_input.is_parrying = False
+                self.player1_input.parry_window_time = 0.0
+        
         # Update Player 1 input
         self.player1_input.left = keys[self.player1_keys['left']]
         self.player1_input.right = keys[self.player1_keys['right']]
         self.player1_input.up = keys[self.player1_keys['up']]
         self.player1_input.down = keys[self.player1_keys['down']]
         self.player1_input.attack = keys[self.player1_keys['attack']]
-        self.player1_input.block = keys[self.player1_keys['block']]
+        
+        # Block state: True if SHIFT held AND not in parry window
+        self.player1_input.block = shift_currently_pressed and not self.player1_input.is_parrying
+        
         self.player1_input.special = keys[self.player1_keys['special']]
+        
+        # Store previous frame state
+        self.shift_was_pressed = shift_currently_pressed
     
     def get_player1_input(self) -> PlayerInput:
         """Get Player 1 input state."""
