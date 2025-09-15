@@ -1,0 +1,41 @@
+# Python virtual environments
+venv/
+env/
+.env/
+.venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.p~
+
+# Build/distribution
+build/
+dist/
+*.spec
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# PyInstaller/artifacts
+*.egg-info/
+**/__pycache__/
+release/
+
+# Logs
+*.log
+
+# Ignore large archives/installers in assets
+assets/audio/*.zip
+assets/audio/*.rar
+assets/audio/*.msi
+assets/audio/*.pdf
+assets/audio/*.url
